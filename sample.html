@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<!-- A sample website which integrates with the SDK -->
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<!--Script needed to embed OfficeBrowserFeedback start-->
+		<script type="text/javascript">
+			window.OfficeBrowserFeedback = window.OfficeBrowserFeedback || {};
+
+			window.OfficeBrowserFeedback.initOptions = {
+				appId: 1234, // Replace by your own app id
+				stylesUrl: "styles/officebrowserfeedback.css", // Replace by where you have hosted the .css
+				intlUrl: "intl/", // Replace by where you have hosted the intl files.
+				// intlFilename is an optional property for using a custom filename for the internationalized strings, the default filename will be used if it is not specified
+				intlFilename: "officebrowserfeedbackstrings.js", // (optional) Here the default filename is used for this field, simply to demonstrate the syntax for this property
+				environment: 1, // 0 - Prod, 1 - Int
+				primaryColour: "#008272", // Replace by a colour which goes with your website.
+				secondaryColour: "#004B50",// Replace by a colour which goes with your website.
+				showEmailAddress: true,
+				screenshot: true,
+				userEmail: "testing@microsofttesting.com",
+				sessionId: "10000000-0000-0000-0000-000000000000", // (optional) If specified, the value needs to be a valid GUID
+				cid: "1234567890_LiveId", // (optional)
+				build: "123456789", // (optional) Another example: 99.1.1.123456789
+				onError: function onError(err) { console.log("SDK encountered error: " + err); }, // (optional) Callback which gets executed when SDK errors
+				bugForm: true, // (optional) false by default				
+				feedbackForumUrl: "https://go.microsoft.com/fwlink/?linkid=2173301",
+				myFeedbackForumUrl: "https://go.microsoft.com/fwlink/?linkid=2171883",
+				isShowThanks: true, // (optional) false by default
+				isCommercialHost: false,
+				emailPolicyValue: 0,
+				screenshotPolicyValue: 0,
+			};
+
+			(function (d, s, id) {
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) { return; }
+				js = d.createElement(s); js.id = id;
+				js.src = "scripts/officebrowserfeedback.js";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'officebrowserfeedback-jssdk'));
+		</script>
+	<!--end-->
+
+	<title>Office Browser Feedback sample</title>
+</head>
+<body>
+	<input type="button" value="Give Multi Feedback (Basic)" style="height:100px; width:200px"
+			onclick="handlePromise(OfficeBrowserFeedback.multiFeedback());" />
+
+	<input type="button" value="Give Multi Feedback (Additional Properties)" style="height:100px; width:280px"
+			onclick="startMultiFeedback_Additional()" />
+
+	<input type="button" value="Give Multi Feedback (All Optional Properties)" style="height:100px; width:280px"
+			onclick="startMultiFeedback_AllOptional()" />
+
+	<br /><br />
+
+	<input type="button" value="Give Single Feedback" style="height:100px; width:200px"
+			onclick="handlePromise(OfficeBrowserFeedback.singleFeedback('Frown'));" />
+
+	<input type="button" value="Give Single Feedback (Additional Properties)" style="height:100px; width:280px"
+			onclick="startSingleFeedback_Additional()" />
+
+	<input type="button" value="draw the screenshot" style="height:100px; width:280px"
+			onclick="DrawScreenshot()" />
+
+	<div>
+		<label><input type="checkbox" id="toggleRtL" onchange="toggleRtL(this)">Set direction to be 'Right to Left'</label>
+	</div>
+
+	<!-- Functions to handle button clicks -->
+	<script type="text/javascript">
+		function toggleRtL(element) {
+			if (element.checked) document.documentElement.setAttribute("dir", "rtl");
+			else document.documentElement.setAttribute("dir", "ltr");
+		}
+
+		// Specify an additional property in addition to the basics
+		function startSingleFeedback_Additional() {
+			var launchOptions = {
+				webGroup: {
+					sourcePageURI: window.location.href
+				},
+				// categories is optional, "show" controls whether the categories dropdown is shown or not
+				categories: {
+					show: true,
+					customCategories: ["Category 1", "Category 2", "Category 3"]
+				},
+			};
+
+			handlePromise(OfficeBrowserFeedback.singleFeedback('Smile', launchOptions));
+		}
+
+		// Specify a couple of properties in addition to the basics
+		function startMultiFeedback_Additional() {
+			var launchOptions = {
+				applicationGroup: {
+					feedbackTenant: "ABC"
+				},
+				webGroup: {
+					sourcePageURI: window.location.href
+				},
+				// categories is optional, "show" controls whether the categories dropdown is shown or not
+				categories: {
+					show: false,
+				},
+			};
+
+			handlePromise(OfficeBrowserFeedback.multiFeedback(launchOptions));
+		}
+
+		// Specify all optional properties in addition to the basics
+		function startMultiFeedback_AllOptional() {
+			var launchOptions = {
+				applicationGroup: {
+					appData: "{\"AppData1\":\"AppData1 Value\", \"AppData2\":\"AppData2 Value\"}",
+					feedbackTenant: "ABCDE",
+				},
+				telemetryGroup: {
+					audience: "Microsoft",
+					audienceGroup: "Production",
+					channel: "CC",
+					deviceId: "12345abc",
+					deviceType: "Tablet",
+					errorClassification: "ACE",
+					errorCode: "ErrorCode Val",
+					errorName: "ErrorName Val",
+					featureArea: "FeatureArea Val",
+					flights: "Ring 1",
+					flightSource: "ECS",
+					fundamentalArea: "Perf",
+					installationType: "Centennial",
+					isLogIncluded: false,
+					isUserSubscriber: true,
+					loggableUserId: "fccf0101",
+					officeArchitecture: "arm64",
+					officeEditingLang: 1033,
+					officeUILang: 1034,
+					osBitness: 64,
+					osBuild: "10.2345.12345.123456",
+					osUserLang: 1035,
+					platform: "Platform Name",
+					ringId: 987,
+					sku: "SKU Name",
+					sourceContext: "Activation",
+					systemManufacturer: "Lenovo",
+					systemProductName: "X1 Carbon",
+					tenantId: "c0000000-0000-0000-0000-000000000000",
+				},
+				webGroup: {
+					browser: "Chrome",
+					browserVersion: "100.0.1",
+					dataCenter: "West US",
+					sourcePageName: "Edit Page",
+					sourcePageURI: "https://domain/page.html",
+				},
+				// categories is optional, "show" controls whether the categories dropdown is shown or not
+				categories: {
+					show: true,
+					customCategories: ["Category 4", "Category 5", "Category 6"]
+				},
+			};
+
+			handlePromise(OfficeBrowserFeedback.multiFeedback(launchOptions));
+		}
+
+		// draw the screenshot
+		function DrawScreenshot() {
+			OfficeBrowserFeedback.createScreenshot(document.body).then(function(canvas) {
+					document.body.appendChild(canvas);
+			}
+			);
+		}
+
+		// function which logs promise fulfillment/rejection
+		function handlePromise(promise) {
+			promise
+				.then(
+					function onFulfilled() { console.log('suceeded'); }
+				)
+				.catch(
+					function onRejected(err) { console.log('failed with error: ' + err); }
+				);
+		}
+	</script>
+</body>
+</html>
